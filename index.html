@@ -118,6 +118,7 @@
       left: 0;
       width: 100%;
       height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="100%" height="100%" fill="%231a1a1a"/><text x="50%" y="50%" font-family="Arial" font-size="24" fill="%23FFD700" text-anchor="middle" dominant-baseline="middle">Frame Preview</text></svg>');
       background-size: cover;
       background-position: center;
       border-radius: 20px;
@@ -370,7 +371,7 @@
   </div>
 
   <div class="frame-container glow-effect" id="badgeContainer">
-    <div class="frame-bg" id="frameBackground"></div>
+    <div class="frame-bg"></div>
     <img id="userPhoto" class="user-photo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290' viewBox='0 0 300 290'><rect width='100%' height='100%' fill='%23333'/><text x='50%' y='50%' font-family='Arial' font-size='18' fill='%23aaa' text-anchor='middle' dominant-baseline='middle'>Your Photo Here</text></svg>" alt="Your photo" />
     <div class="caption">
       <span id="captionText">Your Name</span>
@@ -407,7 +408,544 @@
       const captionText = document.getElementById('captionText');
       const messageText = document.getElementById('messageText');
       const downloadBtn = document.getElementById('downloadBtn');
-      const frameBg = document.getElementById('frameBackground');
+      const frameBg = document.querySelector('.frame-bg');
+      const badgeContainer = document.getElementById('badgeContainer');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      
+      // Store the generated image data for sharing
+      let generatedImageData = null;
+      
+      // Replace with your actual frame image path
+      frameBg.style.backgroundImage = "url('frame.png')";
+      
+      // Photo upload handler
+      photoUploadInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            userPhoto.src = e.target.result;
+            userPhoto.classList.add('animate-in');
+            setTimeout(() => {
+              userPhoto.classList.remove('animate-in');
+              generateBadgeImage();
+            }, 800);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Name input handler
+      userNameInput.addEventListener('input', function() {
+        updateText();
+        // Regenerate image when name changes
+        if (userPhoto.src && !userPhoto.src.includes('data:image/svg+xml')) {
+          generateBadgeImage();
+        }
+      });
+      
+      function updateText() {
+        const name = userNameInput.value.trim();
+        if (name) {
+          captionText.textContent = name;
+          messageText.textContent = `${name} is going to the 10th anniversary celebrations, are you?`;
+          updateShareLinks(name);
+        } else {
+          captionText.textContent = 'Your Name';
+          messageText.textContent = 'Create your personalized attendance badge and share with friends!';
+        }
+      }
+      
+      // Generate the badge as an image
+      function generateBadgeImage() {
+        loadingSpinner.style.display = 'block';
+        
+        // Use html2canvas to capture the badge
+        html2canvas(badgeContainer, {
+          useCORS: true,
+          scale: 2, // Higher quality
+          logging: false,
+          backgroundColor: null
+        }).then(canvas => {
+          generatedImageData = canvas.toDataURL('image/png');
+          loadingSpinner.style.display = 'none';
+        }).catch(error => {
+          console.error('Error generating image:', error);
+          loadingSpinner.style.display = 'none';
+        });
+      }
+      
+      // Download functionality
+      downloadBtn.addEventListener('click', function() {
+        if (!generatedImageData) {
+          alert('Please upload a photo first');
+          return;
+        }
+        
+        const downloadLink = document.createElement('a');
+        const fileName = `DC_Tumaini_10th_Anniversary_${userNameInput.value || 'Badge'}.png`;
+        
+        downloadLink.href = generatedImageData;
+        downloadLink.download = fileName;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      });
+      
+      function updateShareLinks(name) {
+        const pageUrl = encodeURIComponent(window.location.href);
+        const message = encodeURIComponent(`${name} is going to the D.C Tumaini 10th anniversary celebrations! Join us!`);
+        
+        // Facebook share
+        document.getElementById('fbShare').addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!generatedImageData) {
+            alert('Please upload a photo first');
+            return;
+          }
+          
+          // For Facebook, we can't directly share with image, so we'll open a new window
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}&quote=${message}`, '_blank');
+        });
+        
+        // WhatsApp share
+        document.getElementById('waShare').addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!generatedImageData) {
+            alert('Please upload a photo first');
+            return;
+          }
+          
+          // For WhatsApp, we can share the image by first downloading it
+          alert('For WhatsApp sharing, please download the image first and then share it through WhatsApp');
+        });
+        
+        // Instagram share
+        document.getElementById('igShare').addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!generatedImageData) {
+            alert('Please upload a photo first');
+            return;
+          }
+          
+          alert('For Instagram sharing, please download the image first and then share it through Instagram');
+        });
+        
+        // TikTok share
+        document.getElementById('ttShare').addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!generatedImageData) {
+            alert('Please upload<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Celebrate D.C Tumaini's 10th Anniversary - Create your personalized badge">
+  <title>D.C Tumaini - 10th Anniversary Celebration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary-gold: #FFD700;
+      --secondary-gold: #FFA500;
+      --dark-bg: #0a0a0a;
+      --medium-bg: #1a1a1a;
+      --light-text: #f8f8f8;
+      --shadow-glow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--dark-bg), var(--medium-bg));
+      color: var(--light-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header {
+      margin-bottom: 25px;
+      width: 100%;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 25px;
+    }
+    
+    .input-section {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow-glow);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--primary-gold);
+      font-weight: 500;
+    }
+    
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      font-size: 16px;
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--light-text);
+      transition: all 0.3s ease;
+    }
+    
+    input[type="text"]:focus,
+    input[type="file"]:focus {
+      outline: none;
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+    
+    input[type="file"] {
+      padding: 10px;
+      cursor: pointer;
+    }
+    
+    .frame-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      aspect-ratio: 2 / 3;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .frame-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="100%" height="100%" fill="%231a1a1a"/><text x="50%" y="50%" font-family="Arial" font-size="24" fill="%23FFD700" text-anchor="middle" dominant-baseline="middle">Frame Preview</text></svg>');
+      background-size: cover;
+      background-position: center;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+      z-index: 1;
+    }
+    
+    .user-photo {
+      position: absolute;
+      top: 135px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 290px;
+      border-radius: 10px;
+      object-fit: cover;
+      z-index: 2;
+      background: #000;
+    }
+    
+    .caption {
+      position: absolute;
+      top: 440px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--primary-gold);
+      text-align: center;
+      width: 100%;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+      font-family: 'Georgia', serif;
+      z-index: 3;
+    }
+    
+    .label {
+      display: block;
+      font-size: 18px;
+      margin-top: 5px;
+      color: #fff;
+    }
+    
+    .message {
+      margin: 25px 0;
+      font-size: 1.3rem;
+      color: var(--primary-gold);
+      text-align: center;
+      max-width: 500px;
+      font-weight: 500;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .share-buttons {
+      margin: 30px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    .share-buttons a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(to right, #222, #444);
+      color: var(--light-text);
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    
+    .share-buttons a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .share-buttons a i {
+      font-size: 20px;
+    }
+    
+    .fb-share:hover { background: linear-gradient(to right, #3b5998, #2d4373); }
+    .wa-share:hover { background: linear-gradient(to right, #25D366, #128C7E); }
+    .ig-share:hover { background: linear-gradient(to right, #833AB4, #C13584, #E1306C, #FD1D1D); }
+    .tt-share:hover { background: linear-gradient(to right, #000000, #333333); }
+    
+    .download-btn {
+      background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
+      color: #000;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      margin-top: 15px;
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .footer {
+      margin-top: 30px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    
+    /* Instructions */
+    .instructions {
+      background: rgba(255, 215, 0, 0.1);
+      border-left: 4px solid var(--primary-gold);
+      padding: 15px;
+      margin: 20px 0;
+      text-align: left;
+      border-radius: 4px;
+      max-width: 500px;
+    }
+    
+    .instructions h3 {
+      color: var(--primary-gold);
+      margin-bottom: 10px;
+    }
+    
+    .instructions ol {
+      padding-left: 20px;
+    }
+    
+    .instructions li {
+      margin-bottom: 8px;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      border: 4px solid rgba(255, 215, 0, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-gold);
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes glow {
+      0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+      100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+    }
+    
+    .animate-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .glow-effect {
+      animation: glow 2s infinite;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .frame-container {
+        max-width: 320px;
+      }
+      
+      .user-photo {
+        width: 250px;
+        height: 240px;
+        top: 120px;
+      }
+      
+      .caption {
+        top: 380px;
+        font-size: 20px;
+      }
+      
+      .share-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      .frame-container {
+        max-width: 280px;
+      }
+      
+      .user-photo {
+        width: 220px;
+        height: 210px;
+        top: 110px;
+      }
+      
+      .caption {
+        top: 340px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header animate-in">
+    <h1>D.C TUMAINI</h1>
+    <div class="subtitle">10th Anniversary Celebration</div>
+  </div>
+
+  <div class="instructions animate-in">
+    <h3>How to create your badge:</h3>
+    <ol>
+      <li>Enter your name in the field below</li>
+      <li>Upload your photo (selfie or any image)</li>
+      <li>Your photo will appear in the anniversary frame</li>
+      <li>Download or share your personalized badge</li>
+    </ol>
+  </div>
+
+  <div class="input-section animate-in">
+    <div class="input-group">
+      <label for="userName"><i class="fas fa-user"></i> Enter your name</label>
+      <input type="text" id="userName" placeholder="Your name here" />
+    </div>
+    
+    <div class="input-group">
+      <label for="photoUpload"><i class="fas fa-camera"></i> Upload your photo</label>
+      <input type="file" id="photoUpload" accept="image/*" />
+    </div>
+  </div>
+
+  <div class="frame-container glow-effect" id="badgeContainer">
+    <div class="frame-bg"></div>
+    <img id="userPhoto" class="user-photo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290' viewBox='0 0 300 290'><rect width='100%' height='100%' fill='%23333'/><text x='50%' y='50%' font-family='Arial' font-size='18' fill='%23aaa' text-anchor='middle' dominant-baseline='middle'>Your Photo Here</text></svg>" alt="Your photo" />
+    <div class="caption">
+      <span id="captionText">Your Name</span>
+      <span class="label">IS ATTENDING</span>
+    </div>
+  </div>
+
+  <div class="message" id="messageText">
+    Create your personalized attendance badge and share with friends!
+  </div>
+
+  <div class="spinner" id="loadingSpinner"></div>
+
+  <button class="download-btn" id="downloadBtn">
+    <i class="fas fa-download"></i> Download Your Badge
+  </button>
+
+  <div class="share-buttons">
+    <a href="#" id="fbShare" class="fb-share" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+    <a href="#" id="waShare" class="wa-share" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a href="#" id="igShare" class="ig-share" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+    <a href="#" id="ttShare" class="tt-share" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+  </div>
+
+  <div class="footer">
+    © 2023 D.C Tumaini - Celebrating 10 Years of Faith and Community
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const userNameInput = document.getElementById('userName');
+      const photoUploadInput = document.getElementById('photoUpload');
+      const userPhoto = document.getElementById('userPhoto');
+      const captionText = document.getElementById('captionText');
+      const messageText = document.getElementById('messageText');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const frameBg = document.querySelector('.frame-bg');
       const badgeContainer = document.getElementById('badgeContainer');
       const loadingSpinner = document.getElementById('loadingSpinner');
       
@@ -415,31 +953,8 @@
       let generatedImageData = null;
       let hasUploadedPhoto = false;
       
-      // Create a frame using inline SVG (will work on GitHub Pages)
-      const frameSvg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
-          <defs>
-            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
-            </linearGradient>
-            <pattern id="pattern" patternUnits="userSpaceOnUse" width="400" height="600">
-              <rect width="400" height="600" fill="#0a0a0a"/>
-              <rect x="10" y="10" width="380" height="580" fill="none" stroke="url(#goldGradient)" stroke-width="8" rx="20" ry="20"/>
-              <rect x="30" y="120" width="340" height="310" fill="none" stroke="url(#goldGradient)" stroke-width="4" rx="10" ry="10"/>
-              <text x="200" y="60" font-family="Georgia" font-size="30" fill="url(#goldGradient)" text-anchor="middle" font-weight="bold">10TH ANNIVERSARY</text>
-              <text x="200" y="530" font-family="Georgia" font-size="24" fill="url(#goldGradient)" text-anchor="middle">D.C TUMAINI</text>
-              <path d="M50,100 C100,50 300,50 350,100" stroke="url(#goldGradient)" stroke-width="2" fill="none"/>
-              <path d="M50,500 C100,550 300,550 350,500" stroke="url(#goldGradient)" stroke-width="2" fill="none"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#pattern)"/>
-        </svg>
-      `;
-      
-      // Convert SVG to data URL
-      const frameDataUrl = 'data:image/svg+xml;base64,' + btoa(frameSvg);
-      frameBg.style.backgroundImage = `url('${frameDataUrl}')`;
+      // Replace with your actual frame image path
+      frameBg.style.backgroundImage = "url('frame.png')";
       
       // Photo upload handler
       photoUploadInput.addEventListener('change', function(event) {
@@ -449,13 +964,11 @@
           const reader = new FileReader();
           reader.onload = function(e) {
             userPhoto.src = e.target.result;
-            userPhoto.onload = function() {
-              userPhoto.classList.add('animate-in');
-              setTimeout(() => {
-                userPhoto.classList.remove('animate-in');
-                generateBadgeImage();
-              }, 800);
-            };
+            userPhoto.classList.add('animate-in');
+            setTimeout(() => {
+              userPhoto.classList.remove('animate-in');
+              generateBadgeImage();
+            }, 800);
           };
           reader.readAsDataURL(file);
         }
@@ -491,83 +1004,15 @@
           useCORS: true,
           scale: 2, // Higher quality
           logging: false,
-          backgroundColor: null,
-          allowTaint: true
+          backgroundColor: null
         }).then(canvas => {
           generatedImageData = canvas.toDataURL('image/png');
           loadingSpinner.style.display = 'none';
         }).catch(error => {
           console.error('Error generating image:', error);
           loadingSpinner.style.display = 'none';
-          // Fallback: use the frame background and user photo to create the image
-          createFallbackImage();
+          alert('Error generating image. Please try again.');
         });
-      }
-      
-      // Fallback image creation if html2canvas fails
-      function createFallbackImage() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas dimensions
-        canvas.width = 800;
-        canvas.height = 1200;
-        
-        // Draw background
-        ctx.fillStyle = '#1a1a1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw frame border
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, '#FFD700');
-        gradient.addColorStop(1, '#FFA500');
-        
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 10;
-        ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
-        
-        // Draw title
-        ctx.font = 'bold 60px Georgia';
-        ctx.fillStyle = gradient;
-        ctx.textAlign = 'center';
-        ctx.fillText('10TH ANNIVERSARY', canvas.width / 2, 100);
-        
-        // Draw user photo if available
-        if (hasUploadedPhoto) {
-          const img = new Image();
-          img.onload = function() {
-            // Draw the photo
-            ctx.drawImage(img, 100, 270, 600, 580);
-            
-            // Draw user name
-            ctx.font = 'bold 44px Georgia';
-            ctx.fillStyle = gradient;
-            ctx.fillText(userNameInput.value || 'Your Name', canvas.width / 2, 950);
-            
-            // Draw "IS ATTENDING" text
-            ctx.font = '36px Georgia';
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillText('IS ATTENDING', canvas.width / 2, 1000);
-            
-            // Draw footer
-            ctx.font = '30px Georgia';
-            ctx.fillText('D.C TUMAINI', canvas.width / 2, 1120);
-            
-            // Set the generated image data
-            generatedImageData = canvas.toDataURL('image/png');
-            loadingSpinner.style.display = 'none';
-          };
-          img.src = userPhoto.src;
-        } else {
-          // Draw placeholder
-          ctx.font = '30px Arial';
-          ctx.fillStyle = '#AAAAAA';
-          ctx.fillText('Upload your photo above', canvas.width / 2, canvas.height / 2);
-          
-          // Set the generated image data
-          generatedImageData = canvas.toDataURL('image/png');
-          loadingSpinner.style.display = 'none';
-        }
       }
       
       // Download functionality
@@ -656,6 +1101,19 @@
           
           if (!generatedImageData) {
             alert('Please wait while we prepare your badge for sharing');
+            return;
+          }
+          
+          alert('For TikTok sharing, please download the image first and then share it through TikTok');
+        });
+      }
+      
+      // Initialize
+      updateText();
+    });
+  </script>
+</body>
+</html> a photo first');
             return;
           }
           
