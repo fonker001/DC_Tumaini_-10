@@ -27,13 +27,6 @@
             margin: 0 auto;
         }
         
-        .logo {
-            width: 120px;
-            margin: 10px auto;
-            display: block;
-            filter: drop-shadow(0 0 5px gold);
-        }
-        
         h1 {
             font-size: 2.2rem;
             margin: 10px 0;
@@ -117,16 +110,8 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-        
-        .frame {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1; /* Frame behind the photo */
-            pointer-events: none; /* Allow clicks to pass through to the photo */
+            background-size: cover;
+            background-position: center;
         }
         
         .user-photo {
@@ -138,7 +123,7 @@
             height: 290px;
             border-radius: 10px;
             object-fit: cover;
-            z-index: 2; /* Photo on top of the frame */
+            z-index: 2;
             border: 2px solid #FFD700;
             background: #000;
         }
@@ -152,7 +137,7 @@
             font-weight: bold;
             color: #FFD700;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            z-index: 3; /* Text on top of everything */
+            z-index: 3;
             width: 100%;
             text-align: center;
         }
@@ -258,9 +243,8 @@
             </div>
         </div>
         
-        <div class="frame-container" id="badgeContainer">
+        <div class="frame-container" id="badgeContainer" style="background-image: url('frame.png');">
             <img class="user-photo" id="userPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290' viewBox='0 0 300 290'><rect width='100%' height='100%' fill='%23333'/><text x='50%' y='50%' font-family='Arial' font-size='18' fill='%23aaa' text-anchor='middle' dominant-baseline='middle'>Your Photo Here</text></svg>">
-            <img class="frame" id="frameImage" src="frame.png" alt="Anniversary Frame">
             <div class="caption" id="captionText">Your Name</div>
         </div>
         
@@ -295,7 +279,7 @@
             const messageText = document.getElementById('messageText');
             const downloadBtn = document.getElementById('downloadBtn');
             const loadingSpinner = document.getElementById('loadingSpinner');
-            const frameImage = document.getElementById('frameImage');
+            const badgeContainer = document.getElementById('badgeContainer');
             const fbShare = document.getElementById('fbShare');
             const waShare = document.getElementById('waShare');
             const igShare = document.getElementById('igShare');
@@ -378,7 +362,7 @@
                 loadingSpinner.style.display = 'block';
                 
                 // Use html2canvas to capture the badge
-                html2canvas(document.getElementById('badgeContainer'), {
+                html2canvas(badgeContainer, {
                     useCORS: true,
                     scale: 2,
                     logging: false,
@@ -404,32 +388,17 @@
             });
             
             // Handle frame image loading error
+            const frameImage = new Image();
+            frameImage.onload = function() {
+                console.log('Frame image loaded successfully');
+            };
             frameImage.onerror = function() {
                 console.log('Frame image not found. Using fallback design.');
                 
                 // Create a fallback frame
-                const fallbackFrame = document.createElement('div');
-                fallbackFrame.style.position = 'absolute';
-                fallbackFrame.style.top = '0';
-                fallbackFrame.style.left = '0';
-                fallbackFrame.style.width = '100%';
-                fallbackFrame.style.height = '100%';
-                fallbackFrame.style.background = 'linear-gradient(45deg, #1a1a1a, #2a2a2a)';
-                fallbackFrame.style.border = '5px solid #FFD700';
-                fallbackFrame.style.borderRadius = '20px';
-                fallbackFrame.style.zIndex = '1';
-                fallbackFrame.style.pointerEvents = 'none';
-                fallbackFrame.innerHTML = `
-                    <div style="position:absolute; top:20px; left:0; width:100%; text-align:center; color:#FFD700; font-size:24px; font-weight:bold;">
-                        10TH ANNIVERSARY
-                    </div>
-                    <div style="position:absolute; bottom:20px; left:0; width:100%; text-align:center; color:#FFD700; font-size:18px;">
-                        D.C TUMAINI
-                    </div>
-                `;
-                
-                document.getElementById('badgeContainer').appendChild(fallbackFrame);
+                badgeContainer.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"600\" viewBox=\"0 0 400 600\"><defs><linearGradient id=\"grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\"><stop offset=\"0%\" style=\"stop-color:%23FFD700;stop-opacity:1\" /><stop offset=\"100%\" style=\"stop-color:%23FFA500;stop-opacity:1\" /></linearGradient></defs><rect width=\"100%\" height=\"100%\" fill=\"%231a1a1a\"/><rect x=\"10\" y=\"10\" width=\"380\" height=\"580\" fill=\"none\" stroke=\"url(%23grad)\" stroke-width=\"8\" rx=\"20\" ry=\"20\"/><rect x=\"50\" y=\"135\" width=\"300\" height=\"290\" fill=\"none\" stroke=\"url(%23grad)\" stroke-width=\"3\" rx=\"10\" ry=\"10\"/><text x=\"200\" y=\"60\" font-family=\"Georgia\" font-size=\"30\" fill=\"url(%23grad)\" text-anchor=\"middle\" font-weight=\"bold\">10TH ANNIVERSARY</text><text x=\"200\" y=\"530\" font-family=\"Georgia\" font-size=\"24\" fill=\"url(%23grad)\" text-anchor=\"middle\">D.C TUMAINI</text></svg>')";
             };
+            frameImage.src = 'frame.png';
             
             // Initialize share links
             updateShareLinks();
