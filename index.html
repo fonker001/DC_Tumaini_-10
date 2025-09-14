@@ -114,7 +114,17 @@
             background-position: center;
         }
         
-        .user-photo {position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; object-fit: cover;     /* keeps aspect ratio, fills container */ object-position: center center; z-index: 2;}
+        .user-photo {
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;     /* keeps aspect ratio, fills container */ 
+            object-position: center center; 
+            z-index: 2;
+        }
         
         .caption {
             position: absolute;
@@ -199,7 +209,227 @@
             margin-top: 30px;
             color: #888;
             font-size: 14px;
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Display Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            background: linear-gradient(to bottom, #2c3e50, #1a1a2e);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            margin: 20px 0;
+            color: #FFD700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+            line-height: 1.6;
+        }
+        
+        .frame-container {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: #000;
+            border: 2px solid #FFD700;
+        }
+        
+        .user-photo {
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+            object-position: center center; 
+            z-index: 2;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 400px;
+        }
+        
+        input[type="file"] {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .diagnostic {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            text-align: left;
+            max-width: 400px;
+        }
+        
+        .diagnostic h3 {
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+        
+        .diagnostic ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .diagnostic li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 500px) {
+            .frame-container, .controls {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .frame-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Photo Display Test</h1>
+        
+        <div class="instructions">
+            <p>This test focuses on the photo display. Upload an image to see how it displays with your CSS.</p>
+        </div>
+        
+        <div class="frame-container">
+            <img class="user-photo" id="userPhoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500'><rect width='100%' height='100%' fill='%23333'/><text x='50%' y='50%' font-family='Arial' font-size='20' fill='%23aaa' text-anchor='middle' dominant-baseline='middle'>Upload a photo to see it here</text></svg>">
+        </div>
+        
+        <div class="controls">
+            <input type="file" id="photoUpload" accept="image/*">
+            <button class="btn" id="resetBtn">Reset to Default</button>
+        </div>
+        
+        <div class="diagnostic">
+            <h3>Diagnostic Info:</h3>
+            <ul>
+                <li>Container Dimensions: <span id="containerSize">400x500px</span></li>
+                <li>Image Source: <span id="imageSource">Placeholder SVG</span></li>
+                <li>Rendered Size: <span id="renderedSize">Calculating...</span></li>
+                <li>Object Fit: <span id="objectFit">cover</span></li>
+                <li>Object Position: <span id="objectPosition">center center</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoUpload = document.getElementById('photoUpload');
+            const userPhoto = document.getElementById('userPhoto');
+            const resetBtn = document.getElementById('resetBtn');
+            const containerSize = document.getElementById('containerSize');
+            const imageSource = document.getElementById('imageSource');
+            const renderedSize = document.getElementById('renderedSize');
+            const objectFit = document.getElementById('objectFit');
+            const objectPosition = document.getElementById('objectPosition');
+            
+            // Update diagnostic info
+            function updateDiagnostics() {
+                containerSize.textContent = `${userPhoto.parentElement.offsetWidth}x${userPhoto.parentElement.offsetHeight}px`;
+                imageSource.textContent = userPhoto.src.substring(0, 50) + (userPhoto.src.length > 50 ? '...' : '');
+                renderedSize.textContent = `${userPhoto.naturalWidth}x${userPhoto.naturalHeight}px`;
+                objectFit.textContent = getComputedStyle(userPhoto).objectFit;
+                objectPosition.textContent = getComputedStyle(userPhoto).objectPosition;
+            }
+            
+            // Handle photo upload
+            photoUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        userPhoto.src = e.target.result;
+                        // Update after image loads
+                        userPhoto.onload = function() {
+                            updateDiagnostics();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Handle reset
+            resetBtn.addEventListener('click', function() {
+                userPhoto.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500'><rect width='100%' height='100%' fill='%23333'/><text x='50%' y='50%' font-family='Arial' font-size='20' fill='%23aaa' text-anchor='middle' dominant-baseline='middle'>Upload a photo to see it here</text></svg>";
+                photoUpload.value = '';
+                updateDiagnostics();
+            });
+            
+            // Initial update
+            updateDiagnostics();
+            
+            // Update on window resize
+            window.addEventListener('resize', updateDiagnostics);
+        });
+    </script>
+</body>
+</html>
         
         @media (max-width: 500px) {
             .frame-container {
@@ -209,7 +439,7 @@
             
             .user-photo {
                 width: 240px;
-                height: 230px;
+                height: auto;
                 top: 110px;
             }
             
