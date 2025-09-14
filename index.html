@@ -125,7 +125,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 2;
+            z-index: 1; /* Frame behind the photo */
+            pointer-events: none; /* Allow clicks to pass through to the photo */
         }
         
         .user-photo {
@@ -137,7 +138,7 @@
             height: 290px;
             border-radius: 10px;
             object-fit: cover;
-            z-index: 1;
+            z-index: 2; /* Photo on top of the frame */
             border: 2px solid #FFD700;
             background: #000;
         }
@@ -151,7 +152,7 @@
             font-weight: bold;
             color: #FFD700;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            z-index: 3;
+            z-index: 3; /* Text on top of everything */
             width: 100%;
             text-align: center;
         }
@@ -303,7 +304,7 @@
             let hasUploadedPhoto = false;
             let generatedImageData = null;
             
-            // Handle photo upload - FIXED
+            // Handle photo upload
             photoUploadInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -311,7 +312,7 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         userPhoto.src = e.target.result;
-                        // Wait for the image to load completely before updating share links
+                        // Wait for the image to load completely
                         userPhoto.onload = function() {
                             updateShareLinks();
                         };
@@ -404,7 +405,7 @@
             
             // Handle frame image loading error
             frameImage.onerror = function() {
-                alert('Error: Frame image not found. Make sure "frame.png" is in the same folder as this HTML file.');
+                console.log('Frame image not found. Using fallback design.');
                 
                 // Create a fallback frame
                 const fallbackFrame = document.createElement('div');
@@ -416,7 +417,8 @@
                 fallbackFrame.style.background = 'linear-gradient(45deg, #1a1a1a, #2a2a2a)';
                 fallbackFrame.style.border = '5px solid #FFD700';
                 fallbackFrame.style.borderRadius = '20px';
-                fallbackFrame.style.zIndex = '2';
+                fallbackFrame.style.zIndex = '1';
+                fallbackFrame.style.pointerEvents = 'none';
                 fallbackFrame.innerHTML = `
                     <div style="position:absolute; top:20px; left:0; width:100%; text-align:center; color:#FFD700; font-size:24px; font-weight:bold;">
                         10TH ANNIVERSARY
