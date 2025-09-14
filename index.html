@@ -303,7 +303,7 @@
             let hasUploadedPhoto = false;
             let generatedImageData = null;
             
-            // Handle photo upload
+            // Handle photo upload - FIXED
             photoUploadInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
@@ -311,7 +311,10 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         userPhoto.src = e.target.result;
-                        updateShareLinks();
+                        // Wait for the image to load completely before updating share links
+                        userPhoto.onload = function() {
+                            updateShareLinks();
+                        };
                     };
                     reader.readAsDataURL(file);
                 }
